@@ -78,11 +78,32 @@ function render(list){
    return `<article class="card item"><h3 class="item-title">${esc(title)}</h3><div class="fields">${vals.map(([h,v])=>`<div class="field"><span class="label">${esc(h)}</span><span class="value">${esc(v)}</span></div>`).join('')}</div></article>`;
  }).join('');
 }
+function barcodeNorm(s){
+  let x=String(s??'').trim().toLowerCase();
+  // Remove common separators while preserving the actual barcode characters.
+  x=x.replace(/[\u200e\u200f\u202a-\u202e\s\-_.]/g,'');
+  return x;
+}
+function barcodeMatches(cell, term){
+  const t=barcodeNorm(term);
+  if(!t) return false;
+  const raw=String(cell??'');
+  // The Excel file may contain more than one barcode in the same cell,
+  // e.g. "1100003&1100004".
+  const parts=raw.split(/[&,;|\/\\]+/).map(barcodeNorm).filter(Boolean);
+  if(parts.some(p=>p===t)) return true;
+  // Also allow a substring match for cells with prefixes/suffixes.
+  return barcodeNorm(raw).includes(t);
+}
 function search(){
  const term=norm(document.getElementById('q').value);
  if(!term){render([]);document.getElementById('count').textContent='';return}
  const col=mode==='name'?nameCol:barcodeCol;
- const list=rows.filter(r=>norm(r[headers[col>=0?col:0]]).includes(term));
+ if(col<0){setStatus('لم يتم العثور على عمود الباركود في ملف Excel.','err');render([]);return}
+ const list=rows.filter(r=>{
+   const value=r[headers[col]];
+   return mode==='barcode' ? barcodeMatches(value,term) : norm(value).includes(term);
+ });
  render(list);
 }
 async function loadData(){
@@ -111,12 +132,12 @@ async function startScan(){
  try{
   scanner=new Html5Qrcode('reader');
   await scanner.start({facingMode:{exact:'environment'}},{fps:10,qrbox:{width:260,height:140}},
-   code=>{document.getElementById('q').value=code;mode='barcode';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode==='barcode'));stopScan();search()},
+   code=>{document.getElementById('q').value=String(code).trim();mode='barcode';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode==='barcode'));setStatus('تمت قراءة الباركود: '+String(code).trim(),'ok');stopScan();search()},
    ()=>{});
  }catch(e){
   try{
    await scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:260,height:140}},
-    code=>{document.getElementById('q').value=code;mode='barcode';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode==='barcode'));stopScan();search()},
+    code=>{document.getElementById('q').value=String(code).trim();mode='barcode';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode==='barcode'));setStatus('تمت قراءة الباركود: '+String(code).trim(),'ok');stopScan();search()},
     ()=>{});
   }catch(err){document.getElementById('reader').innerHTML='<div class="empty">تعذر تشغيل الكاميرا. تأكد من منح إذن الكاميرا واستخدام الموقع عبر HTTPS.</div>';}
  }
