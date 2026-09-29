@@ -22,12 +22,40 @@ h1{margin:0;font-size:clamp(25px,4vw,36px)} .subtitle{color:var(--muted);margin:
 .results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding-bottom:40px}.item{padding:18px}.item-title{font-size:18px;font-weight:850;margin:0 0 14px;color:#0f172a}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.field{background:#f8fafc;border-radius:12px;padding:10px 12px;min-width:0}.label{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}.value{font-size:14px;word-break:break-word}
 .empty{padding:42px;text-align:center;color:var(--muted)} footer{padding:4px 0 30px;color:var(--muted);font-size:12px}
 .modal{position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}.modal.show{display:flex}.modal-card{background:#fff;width:min(520px,100%);border-radius:22px;padding:16px}.modal-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.close{border:0;background:#f1f5f9;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:800}#reader{width:100%;overflow:hidden;border-radius:14px}.hint{font-size:13px;color:var(--muted);padding:10px 2px 2px}
+
+/* Admin dashboard */
+.admin-btn{border:0;background:#7c3aed;color:#fff;border-radius:10px;padding:7px 11px;cursor:pointer;font-weight:800}.login-admin-btn{width:100%;margin-top:10px;min-height:46px;border:1px solid #c4b5fd;background:#f5f3ff;color:#6d28d9;border-radius:12px;font-weight:800;cursor:pointer}.admin-panel{position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:110}.admin-panel.show{display:flex}.admin-card{background:#fff;width:min(980px,100%);max-height:92vh;overflow:auto;border-radius:22px;padding:20px}.admin-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:18px}.admin-box{border:1px solid var(--line);border-radius:16px;padding:15px}.admin-box h3{margin:0 0 12px}.admin-input,.admin-select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:10px;margin-top:5px;font-size:14px}.admin-label{display:block;font-size:12px;font-weight:800;margin-top:10px}.check-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}.check-row label{background:#f8fafc;border-radius:9px;padding:8px 10px;font-size:13px}.admin-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.admin-table{width:100%;border-collapse:collapse;font-size:13px}.admin-table th,.admin-table td{border-bottom:1px solid var(--line);padding:9px;text-align:right;vertical-align:top}.admin-table button{border:0;border-radius:8px;padding:6px 9px;cursor:pointer}.edit-user{background:#e0f2fe}.delete-user{background:#fee2e2;color:#991b1b}.admin-note{font-size:12px;color:var(--muted);margin-top:8px}.admin-error{color:var(--danger);font-size:13px;min-height:18px;margin-top:8px}.admin-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.admin-close{border:0;background:#f1f5f9;border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:800}
 @media(max-width:720px){.search-row{grid-template-columns:1fr 1fr}.input-wrap{grid-column:1/-1}.results{grid-template-columns:1fr}.fields{grid-template-columns:1fr}.search-card{padding:15px}.btn{width:100%}}
+
+/* Login */
+.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#0f172a,#134e4a);display:flex;align-items:center;justify-content:center;padding:18px;z-index:100}
+.login-card{width:min(420px,100%);background:#fff;border-radius:24px;padding:28px;box-shadow:0 25px 70px rgba(0,0,0,.28)}
+.login-card h2{margin:0 0 8px;font-size:25px}.login-card p{margin:0 0 22px;color:var(--muted)}
+.login-label{display:block;font-size:13px;font-weight:800;margin:12px 0 7px}.login-select,.login-input{width:100%;padding:14px;border:1px solid #cbd5e1;border-radius:12px;font-size:16px;outline:none}
+.login-input:focus,.login-select:focus{border-color:#14b8a6;box-shadow:0 0 0 4px rgba(20,184,166,.12)}
+.login-btn{width:100%;margin-top:18px;min-height:50px}.login-error{color:var(--danger);font-size:13px;margin-top:10px;min-height:18px}
+.user-bar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:8px}.role-badge{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:800}
+.logout-btn{border:0;background:#f1f5f9;color:#334155;border-radius:10px;padding:7px 11px;cursor:pointer;font-weight:700}
 </style>
 </head>
 <body>
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-card">
+    <h2>تسجيل الدخول</h2>
+    <p>اختر نوع المستخدم وأدخل كلمة المرور للمتابعة.</p>
+    <label class="login-label" for="userRole">نوع المستخدم</label>
+    <select id="userRole" class="login-select"><option value="employee">موظف</option><option value="manager">مدير</option></select>
+    <label class="login-label" for="loginPassword">كلمة المرور</label>
+    <input id="loginPassword" class="login-input" type="password" inputmode="numeric" autocomplete="off" placeholder="أدخل كلمة المرور">
+    <button id="loginBtn" class="btn primary login-btn">دخول</button>
+    <button id="openAdminFromLogin" class="login-admin-btn">⚙ لوحة التحكم</button>
+    <div class="login-error">للدخول إلى لوحة التحكم استخدم حساب المشرف.</div>
+    <div id="loginError" class="login-error"></div>
+  </div>
+</div>
+
 <div class="container">
-<header><div class="brand"><div class="logo">⌕</div><div><h1>مستكشف المواد</h1><p class="subtitle">بحث سريع داخل دليل المواد</p></div></div></header>
+<header><div class="brand"><div class="logo">⌕</div><div><h1>مستكشف المواد</h1><p class="subtitle">بحث سريع داخل دليل المواد</p></div></div><div class="user-bar"><button id="adminBtn" class="admin-btn">⚙ لوحة التحكم</button><span id="roleBadge" class="role-badge"></span><button id="logoutBtn" class="logout-btn">تسجيل الخروج</button></div></header>
 
 <section class="card search-card">
   <div class="tabs">
@@ -47,6 +75,39 @@ h1{margin:0;font-size:clamp(25px,4vw,36px)} .subtitle{color:var(--muted);margin:
 <footer>يتم تحميل ملف دليل_المواد.xlsx تلقائيًا من نفس مجلد الموقع.</footer>
 </div>
 
+<div id="adminPanel" class="admin-panel">
+ <div class="admin-card">
+  <div class="admin-top"><div><h2 style="margin:0">لوحة تحكم المستخدمين</h2><div class="admin-note">إضافة وتعديل المستخدمين والصلاحيات. التغييرات تحفظ في هذا المتصفح.</div></div><button id="adminClose" class="admin-close">إغلاق</button></div>
+  <div id="adminLoginBox" class="admin-box">
+   <h3>دخول المشرف</h3>
+   <label class="admin-label">اسم المستخدم<input id="adminUsername" class="admin-input" value="admin" autocomplete="off"></label>
+   <label class="admin-label">كلمة المرور<input id="adminPassword" class="admin-input" type="password" placeholder="أدخل كلمة المرور"></label>
+   <button id="adminLoginBtn" class="btn primary" style="margin-top:12px">دخول لوحة التحكم</button><div id="adminLoginError" class="admin-error"></div>
+   <div class="admin-note">بيانات المشرف الافتراضية: admin / 1234. يمكن تغييرها من الكود في قسم ADMIN_CONFIG.</div>
+  </div>
+  <div id="adminContent" style="display:none">
+   <div class="admin-grid">
+    <div class="admin-box">
+     <h3 id="userFormTitle">إضافة مستخدم</h3>
+     <input id="editUserIndex" type="hidden" value="-1">
+     <label class="admin-label">اسم المستخدم<input id="newUsername" class="admin-input" placeholder="مثال: sales"></label>
+     <label class="admin-label">الاسم الظاهر<input id="newDisplayName" class="admin-input" placeholder="مثال: المبيعات"></label>
+     <label class="admin-label">كلمة المرور<input id="newPassword" class="admin-input" type="password" placeholder="كلمة المرور"></label>
+     <label class="admin-label">نوع الصلاحية<select id="newPermission" class="admin-select"><option value="custom">حقول محددة</option><option value="all">جميع الحقول</option></select></label>
+     <div class="admin-label">الصلاحيات الإضافية</div>
+     <div class="check-row"><label><input id="canSearch" type="checkbox" checked> البحث</label><label><input id="canScan" type="checkbox" checked> مسح الباركود</label></div>
+     <div class="admin-label">الحقول المسموح بها</div>
+     <div class="check-row"><label><input id="selectAllFields" type="checkbox"> كل الحقول</label></div>
+     <div id="fieldChecks" class="check-row"></div>
+     <div class="admin-actions"><button id="saveUserBtn" class="btn primary">حفظ المستخدم</button><button id="clearUserBtn" class="btn secondary">تفريغ</button></div>
+     <div id="adminFormError" class="admin-error"></div>
+    </div>
+    <div class="admin-box"><h3>المستخدمون الحاليون</h3><div style="overflow:auto"><table class="admin-table"><thead><tr><th>المستخدم</th><th>الصلاحية</th><th>البحث</th><th>الباركود</th><th>إجراءات</th></tr></thead><tbody id="usersTable"></tbody></table></div></div>
+   </div>
+  </div>
+ </div>
+</div>
+
 <div id="modal" class="modal">
  <div class="modal-card">
   <div class="modal-top"><strong>مسح الباركود</strong><button id="closeModal" class="close">إغلاق</button></div>
@@ -56,7 +117,38 @@ h1{margin:0;font-size:clamp(25px,4vw,36px)} .subtitle{color:var(--muted);margin:
 </div>
 
 <script>
-let rows=[], headers=[], nameCol=-1, barcodeCol=-1, mode='name', scanner=null;
+let rows=[], headers=[], nameCol=-1, barcodeCol=-1, mode='name', scanner=null, currentUser=null;
+
+/* ============================================================
+   إعداد المستخدمين والصلاحيات — عدّل هذا القسم فقط عند الحاجة.
+
+   لإضافة مستخدم جديد انسخ السطر الأخير وعدّل:
+   username     = اسم المستخدم الداخلي
+   password     = كلمة المرور
+   displayName  = الاسم الذي يظهر في شاشة الدخول
+   permission   = 'all' لجميع الحقول أو 'custom' لحقول محددة
+   visibleFields= الحقول المسموح برؤيتها عند استخدام 'custom'
+   canSearch    = السماح بالبحث
+   canScan      = السماح بمسح الباركود بالكاميرا
+
+   الحقول الجاهزة:
+   name = اسم المادة | price1 = السعر الأول | price2 = السعر الثاني | price3 = السعر الثالث | barcode = الباركود
+   ويمكن أيضاً كتابة اسم أي عمود موجود في Excel كما هو.
+   ============================================================ */
+const ADMIN_CONFIG = { username:'admin', password:'1234' };
+const DEFAULT_USERS = [
+  { username:'employee', password:'123', displayName:'موظف', permission:'custom', visibleFields:['name','price3'], canSearch:true, canScan:true },
+  { username:'manager', password:'123456', displayName:'مدير', permission:'all', visibleFields:[], canSearch:true, canScan:true }
+];
+let USERS = loadUsers();
+function loadUsers(){
+  try{ const saved=JSON.parse(localStorage.getItem('materialExplorerUsers')||'null'); return Array.isArray(saved)?saved:JSON.parse(JSON.stringify(DEFAULT_USERS)); }catch(e){ return JSON.parse(JSON.stringify(DEFAULT_USERS)); }
+}
+function saveUsers(){ localStorage.setItem('materialExplorerUsers',JSON.stringify(USERS)); }
+
+const price1Candidates=['السعر الأول','السعر الاول','السعر 1','السعر1','price 1','price1','first price','first_price'];
+const price2Candidates=['السعر الثاني','السعر الثانى','السعر 2','السعر2','price 2','price2','second price','second_price'];
+const price3Candidates=['السعر الثالث','السعر 3','السعر3','price 3','price3','third price','third_price'];
 const nameCandidates=['الاسم العربي للمادة','اسم المادة','المادة','المنتج','الصنف','material','product','name'];
 const barcodeCandidates=['الباركود','باركود','رقم الباركود','barcode','ean','upc','code','sku'];
 const norm=s=>String(s??'').trim().toLowerCase().replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/[ًٌٍَُِّْـ]/g,'').replace(/\s+/g,' ');
@@ -68,14 +160,59 @@ function findCol(cands){
 }
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function setStatus(t,cls=''){const e=document.getElementById('status');e.textContent=t;e.className='status '+cls}
+function findPriceCol(candidates, words){const ns=headers.map(h=>norm(h));for(const c of candidates){const i=ns.indexOf(norm(c));if(i>=0)return i}for(let i=0;i<ns.length;i++){if((ns[i].includes('سعر')||ns[i].includes('price'))&&words.some(w=>ns[i].includes(w)))return i}return -1;}
+function findPrice1Col(){return findPriceCol(price1Candidates,['اول','1','first']);}
+function findPrice2Col(){return findPriceCol(price2Candidates,['ثاني','ثانى','2','second']);}
+function findPrice3Col(){return findPriceCol(price3Candidates,['ثالث','3','third']);}
+function findBarcodeCol(){return barcodeCol;}
+function getVisibleValues(r){
+  if(!currentUser) return [];
+  if(currentUser.permission==='all') return headers.map(h=>[h,r[h]]).filter(([h,v])=>String(v??'').trim()!=='');
+  const price1Col=findPrice1Col(), price2Col=findPrice2Col(), price3Col=findPrice3Col(), barcodeColumn=findBarcodeCol(), result=[];
+  for(const key of (currentUser.visibleFields||[])){
+    let col=-1, label='';
+    if(key==='name'){col=nameCol; label=nameCol>=0?headers[nameCol]:'اسم المادة';}
+    else if(key==='price1'){col=price1Col; label=price1Col>=0?headers[price1Col]:'السعر الأول';}
+    else if(key==='price2'){col=price2Col; label=price2Col>=0?headers[price2Col]:'السعر الثاني';}
+    else if(key==='price3'){col=price3Col; label=price3Col>=0?headers[price3Col]:'السعر الثالث';}
+    else if(key==='barcode'){col=barcodeColumn; label=barcodeColumn>=0?headers[barcodeColumn]:'الباركود';}
+    else {col=headers.findIndex(h=>norm(h)===norm(key)); label=col>=0?headers[col]:key;}
+    if(col>=0 && String(r[headers[col]]??'').trim()!=='') result.push([label,r[headers[col]]]);
+  }
+  return result;
+}
+function populateUsers(){
+  const select=document.getElementById('userRole');
+  select.innerHTML=USERS.map((u,i)=>`<option value="${i}">${esc(u.displayName||u.username)}</option>`).join('');
+}
+function login(userIndex,pw){
+  const user=USERS[Number(userIndex)];
+  if(!user || user.password!==pw){document.getElementById('loginError').textContent='كلمة المرور غير صحيحة.';return}
+  currentUser=user;
+  document.getElementById('loginOverlay').style.display='none';
+  document.getElementById('roleBadge').textContent=user.displayName||user.username;
+  document.getElementById('loginError').textContent='';
+  document.getElementById('loginPassword').value='';
+  document.getElementById('searchBtn').disabled=!user.canSearch;
+  document.getElementById('scanBtn').disabled=!user.canScan;
+  if(rows.length)setStatus(`تم تسجيل الدخول كـ ${user.displayName||user.username}.`,'ok');
+}
+function logout(){
+  currentUser=null; stopScan();
+  document.getElementById('loginOverlay').style.display='flex';
+  document.getElementById('loginPassword').value='';
+  document.getElementById('loginError').textContent='';
+  document.getElementById('searchBtn').disabled=false;
+  document.getElementById('scanBtn').disabled=false;
+  render([]);
+}
 function render(list){
- const out=document.getElementById('results'), count=document.getElementById('count');
- count.textContent=list.length ? `${list.length} نتيجة` : '';
+ const out=document.getElementById('results'),count=document.getElementById('count');count.textContent=list.length?`${list.length} نتيجة`:'';
  if(!list.length){out.innerHTML='<div class="card empty">لا توجد نتائج مطابقة.</div>';return}
  out.innerHTML=list.slice(0,100).map(r=>{
-   const title=nameCol>=0 && r[headers[nameCol]] ? r[headers[nameCol]] : 'مادة';
-   const vals=headers.map(h=>[h,r[h]]).filter(([h,v])=>String(v??'').trim()!=='');
-   return `<article class="card item"><h3 class="item-title">${esc(title)}</h3><div class="fields">${vals.map(([h,v])=>`<div class="field"><span class="label">${esc(h)}</span><span class="value">${esc(v)}</span></div>`).join('')}</div></article>`;
+  const title=nameCol>=0&&r[headers[nameCol]]?r[headers[nameCol]]:'مادة';
+  const vals=getVisibleValues(r);
+  return `<article class="card item"><h3 class="item-title">${esc(title)}</h3><div class="fields">${vals.map(([h,v])=>`<div class="field"><span class="label">${esc(h)}</span><span class="value">${esc(v)}</span></div>`).join('')}</div></article>`;
  }).join('');
 }
 function barcodeNorm(s){
@@ -96,6 +233,7 @@ function barcodeMatches(cell, term){
   return barcodeNorm(raw).includes(t);
 }
 function search(){
+ if(!currentUser || !currentUser.canSearch) return;
  const term=norm(document.getElementById('q').value);
  if(!term){render([]);document.getElementById('count').textContent='';return}
  const col=mode==='name'?nameCol:barcodeCol;
@@ -106,6 +244,59 @@ function search(){
  });
  render(list);
 }
+function openAdmin(){
+  document.getElementById('adminPanel').classList.add('show');
+  document.getElementById('adminLoginBox').style.display='block';
+  document.getElementById('adminContent').style.display='none';
+  document.getElementById('adminPassword').value='';
+  document.getElementById('adminLoginError').textContent='';
+  document.getElementById('adminUsername').value=ADMIN_CONFIG.username;
+}
+function closeAdmin(){document.getElementById('adminPanel').classList.remove('show');}
+function adminLogin(){
+  const u=document.getElementById('adminUsername').value.trim(), p=document.getElementById('adminPassword').value;
+  if(u!==ADMIN_CONFIG.username || p!==ADMIN_CONFIG.password){document.getElementById('adminLoginError').textContent='بيانات المشرف غير صحيحة.';return}
+  document.getElementById('adminLoginBox').style.display='none';
+  document.getElementById('adminContent').style.display='block';
+  renderAdminFields(); renderUsersTable(); clearUserForm();
+}
+function renderAdminFields(){
+  const box=document.getElementById('fieldChecks');
+  const fields=[['name',nameCol>=0?headers[nameCol]:'اسم المادة'],['price1',findPrice1Col()>=0?headers[findPrice1Col()]:'السعر الأول'],['price2',findPrice2Col()>=0?headers[findPrice2Col()]:'السعر الثاني'],['price3',findPrice3Col()>=0?headers[findPrice3Col()]:'السعر الثالث'],['barcode',barcodeCol>=0?headers[barcodeCol]:'الباركود']];
+  headers.forEach((h,i)=>{ if(!fields.some(x=>x[1]===h)) fields.push([`header:${i}`,h]); });
+  box.innerHTML=fields.map(([key,label])=>`<label><input type="checkbox" class="field-check" value="${esc(key)}"> ${esc(label)}</label>`).join('');
+}
+function renderUsersTable(){
+  document.getElementById('usersTable').innerHTML=USERS.map((u,i)=>`<tr><td><strong>${esc(u.displayName||u.username)}</strong><br><small>${esc(u.username)}</small></td><td>${u.permission==='all'?'جميع الحقول':'حقول محددة'}</td><td>${u.canSearch?'نعم':'لا'}</td><td>${u.canScan?'نعم':'لا'}</td><td><button class="edit-user" onclick="editUser(${i})">تعديل</button> <button class="delete-user" onclick="deleteUser(${i})">حذف</button></td></tr>`).join('');
+}
+function clearUserForm(){
+  document.getElementById('editUserIndex').value='-1'; document.getElementById('userFormTitle').textContent='إضافة مستخدم';
+  ['newUsername','newDisplayName','newPassword'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('newPermission').value='custom'; document.getElementById('canSearch').checked=true; document.getElementById('canScan').checked=true;
+  document.querySelectorAll('.field-check').forEach(x=>x.checked=false); document.getElementById('selectAllFields').checked=false; document.getElementById('adminFormError').textContent='';
+}
+function editUser(i){
+  const u=USERS[i]; document.getElementById('editUserIndex').value=i; document.getElementById('userFormTitle').textContent='تعديل مستخدم';
+  document.getElementById('newUsername').value=u.username; document.getElementById('newDisplayName').value=u.displayName||''; document.getElementById('newPassword').value=u.password||'';
+  document.getElementById('newPermission').value=u.permission||'custom'; document.getElementById('canSearch').checked=!!u.canSearch; document.getElementById('canScan').checked=!!u.canScan;
+  document.querySelectorAll('.field-check').forEach(x=>x.checked=(u.permission==='all' || (u.visibleFields||[]).includes(x.value))); document.getElementById('selectAllFields').checked=(u.permission==='all'); document.getElementById('adminFormError').textContent='';
+}
+function saveUserFromForm(){
+  const idx=Number(document.getElementById('editUserIndex').value), username=document.getElementById('newUsername').value.trim(), displayName=document.getElementById('newDisplayName').value.trim(), password=document.getElementById('newPassword').value;
+  const permission=document.getElementById('newPermission').value;
+  if(!username||!password){document.getElementById('adminFormError').textContent='اسم المستخدم وكلمة المرور مطلوبان.';return}
+  if(USERS.some((u,i)=>i!==idx && u.username.toLowerCase()===username.toLowerCase())){document.getElementById('adminFormError').textContent='اسم المستخدم موجود مسبقًا.';return}
+  const allFields=document.getElementById('selectAllFields').checked;
+  const visibleFields=[...document.querySelectorAll('.field-check:checked')].map(x=>x.value);
+  const user={username,password,displayName:displayName||username,permission:allFields?'all':permission,visibleFields,canSearch:document.getElementById('canSearch').checked,canScan:document.getElementById('canScan').checked};
+  if(idx>=0) USERS[idx]=user; else USERS.push(user); saveUsers(); populateUsers(); renderUsersTable(); clearUserForm();
+  document.getElementById('adminFormError').textContent='تم حفظ المستخدم بنجاح.';
+}
+function deleteUser(i){
+  if(!confirm(`هل تريد حذف المستخدم: ${USERS[i].displayName||USERS[i].username} ؟`)) return;
+  USERS.splice(i,1); saveUsers(); populateUsers(); renderUsersTable(); clearUserForm();
+}
+
 async function loadData(){
  try{
   const res=await fetch('دليل_المواد.xlsx',{cache:'no-store'});
@@ -125,9 +316,18 @@ document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
  mode=b.dataset.mode;document.getElementById('q').placeholder=mode==='name'?'اكتب اسم المادة...':'اكتب الباركود...';document.getElementById('q').focus();search();
 });
 document.getElementById('q').addEventListener('input',search);
+populateUsers();
+document.getElementById('loginBtn').onclick=()=>login(document.getElementById('userRole').value,document.getElementById('loginPassword').value);
+document.getElementById('loginPassword').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginBtn').click()});
+document.getElementById('logoutBtn').onclick=logout;
 document.getElementById('searchBtn').onclick=search;
+document.getElementById('adminBtn').onclick=openAdmin;
+document.getElementById('openAdminFromLogin').onclick=openAdmin;
+document.getElementById('adminClose').onclick=closeAdmin;
+document.getElementById('adminLoginBtn').onclick=adminLogin;
 
 async function startScan(){
+ if(!currentUser || !currentUser.canScan) return;
  const modal=document.getElementById('modal'); modal.classList.add('show');
  try{
   scanner=new Html5Qrcode('reader');
@@ -146,6 +346,9 @@ async function stopScan(){if(scanner){try{await scanner.stop();}catch(e){}try{sc
 document.getElementById('scanBtn').onclick=startScan;
 document.getElementById('closeModal').onclick=stopScan;
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')stopScan()});
+populateUsers();
+document.getElementById('selectAllFields').addEventListener('change',e=>{document.querySelectorAll('.field-check').forEach(x=>x.checked=e.target.checked); if(e.target.checked) document.getElementById('newPermission').value='all'; else document.getElementById('newPermission').value='custom';});
+document.getElementById('newPermission').addEventListener('change',e=>{if(e.target.value==='all'){document.getElementById('selectAllFields').checked=true;document.querySelectorAll('.field-check').forEach(x=>x.checked=true)} else {document.getElementById('selectAllFields').checked=false;}});
 loadData();
 </script>
 </body>
