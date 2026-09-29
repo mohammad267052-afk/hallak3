@@ -99,7 +99,7 @@ h1{margin:0;font-size:clamp(25px,4vw,36px)} .subtitle{color:var(--muted);margin:
      <div class="admin-label">الحقول المسموح بها</div>
      <div class="check-row"><label><input id="selectAllFields" type="checkbox"> كل الحقول</label></div>
      <div id="fieldChecks" class="check-row"></div>
-     <div class="admin-actions"><button id="saveUserBtn" class="btn primary">حفظ المستخدم</button><button id="clearUserBtn" class="btn secondary">تفريغ</button></div>
+     <div class="admin-actions"><button type="button" id="saveUserBtn" class="btn primary">حفظ المستخدم</button><button type="button" id="clearUserBtn" class="btn secondary">تفريغ</button></div>
      <div id="adminFormError" class="admin-error"></div>
     </div>
     <div class="admin-box"><h3>المستخدمون الحاليون</h3><div style="overflow:auto"><table class="admin-table"><thead><tr><th>المستخدم</th><th>الصلاحية</th><th>البحث</th><th>الباركود</th><th>إجراءات</th></tr></thead><tbody id="usersTable"></tbody></table></div></div>
@@ -267,8 +267,16 @@ function renderAdminFields(){
   box.innerHTML=fields.map(([key,label])=>`<label><input type="checkbox" class="field-check" value="${esc(key)}"> ${esc(label)}</label>`).join('');
 }
 function renderUsersTable(){
-  document.getElementById('usersTable').innerHTML=USERS.map((u,i)=>`<tr><td><strong>${esc(u.displayName||u.username)}</strong><br><small>${esc(u.username)}</small></td><td>${u.permission==='all'?'جميع الحقول':'حقول محددة'}</td><td>${u.canSearch?'نعم':'لا'}</td><td>${u.canScan?'نعم':'لا'}</td><td><button class="edit-user" onclick="editUser(${i})">تعديل</button> <button class="delete-user" onclick="deleteUser(${i})">حذف</button></td></tr>`).join('');
+  document.getElementById('usersTable').innerHTML=USERS.map((u,i)=>`<tr><td><strong>${esc(u.displayName||u.username)}</strong><br><small>${esc(u.username)}</small></td><td>${u.permission==='all'?'جميع الحقول':'حقول محددة'}</td><td>${u.canSearch?'نعم':'لا'}</td><td>${u.canScan?'نعم':'لا'}</td><td><button type="button" class="edit-user" data-action="edit" data-index="${i}">تعديل</button> <button type="button" class="delete-user" data-action="delete" data-index="${i}">حذف</button></td></tr>`).join('');
 }
+document.getElementById('usersTable').addEventListener('click', function(e){
+  const btn=e.target.closest('button[data-action]');
+  if(!btn) return;
+  const i=Number(btn.dataset.index);
+  if(!Number.isInteger(i) || !USERS[i]) return;
+  if(btn.dataset.action==='edit') editUser(i);
+  if(btn.dataset.action==='delete') deleteUser(i);
+});
 function clearUserForm(){
   document.getElementById('editUserIndex').value='-1'; document.getElementById('userFormTitle').textContent='إضافة مستخدم';
   ['newUsername','newDisplayName','newPassword'].forEach(id=>document.getElementById(id).value='');
@@ -289,12 +297,15 @@ function saveUserFromForm(){
   const allFields=document.getElementById('selectAllFields').checked;
   const visibleFields=[...document.querySelectorAll('.field-check:checked')].map(x=>x.value);
   const user={username,password,displayName:displayName||username,permission:allFields?'all':permission,visibleFields,canSearch:document.getElementById('canSearch').checked,canScan:document.getElementById('canScan').checked};
-  if(idx>=0) USERS[idx]=user; else USERS.push(user); saveUsers(); populateUsers(); renderUsersTable(); clearUserForm();
+  if(idx>=0) USERS[idx]=user; else USERS.push(user);
+  saveUsers(); populateUsers(); renderUsersTable();
+  clearUserForm();
   document.getElementById('adminFormError').textContent='تم حفظ المستخدم بنجاح.';
 }
 function deleteUser(i){
   if(!confirm(`هل تريد حذف المستخدم: ${USERS[i].displayName||USERS[i].username} ؟`)) return;
   USERS.splice(i,1); saveUsers(); populateUsers(); renderUsersTable(); clearUserForm();
+  document.getElementById('adminFormError').textContent='تم حذف المستخدم بنجاح.';
 }
 
 async function loadData(){
@@ -325,6 +336,11 @@ document.getElementById('adminBtn').onclick=openAdmin;
 document.getElementById('openAdminFromLogin').onclick=openAdmin;
 document.getElementById('adminClose').onclick=closeAdmin;
 document.getElementById('adminLoginBtn').onclick=adminLogin;
+document.getElementById('saveUserBtn').onclick=saveUserFromForm;
+document.getElementById('clearUserBtn').onclick=clearUserForm;
+document.getElementById('selectAllFields').onchange=e=>{document.querySelectorAll('.field-check').forEach(x=>x.checked=e.target.checked); if(e.target.checked) document.getElementById('newPermission').value='all';};
+document.getElementById('newPermission').onchange=e=>{ if(e.target.value==='all'){document.getElementById('selectAllFields').checked=true;document.querySelectorAll('.field-check').forEach(x=>x.checked=true);} };
+
 
 async function startScan(){
  if(!currentUser || !currentUser.canScan) return;
