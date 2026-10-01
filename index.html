@@ -83,7 +83,6 @@ h1{margin:0;font-size:clamp(25px,4vw,36px)} .subtitle{color:var(--muted);margin:
    <label class="admin-label">اسم المستخدم<input id="adminUsername" class="admin-input" value="admin" autocomplete="off"></label>
    <label class="admin-label">كلمة المرور<input id="adminPassword" class="admin-input" type="password" placeholder="أدخل كلمة المرور"></label>
    <button id="adminLoginBtn" class="btn primary" style="margin-top:12px">دخول لوحة التحكم</button><div id="adminLoginError" class="admin-error"></div>
-   <div class="admin-note">بيانات المشرف الافتراضية: admin / 1234. يمكن تغييرها من الكود في قسم ADMIN_CONFIG.</div>
   </div>
   <div id="adminContent" style="display:none">
    <div class="admin-box" style="margin-bottom:16px;background:#f0fdfa;border-color:#99f6e4">
@@ -118,8 +117,10 @@ h1{margin:0;font-size:clamp(25px,4vw,36px)} .subtitle{color:var(--muted);margin:
 <div id="modal" class="modal">
  <div class="modal-card">
   <div class="modal-top"><strong>مسح الباركود</strong><button id="closeModal" class="close">إغلاق</button></div>
+  <label class="admin-label" for="cameraSelect">اختر الكاميرا</label>
+  <select id="cameraSelect" class="admin-select"><option value="">جاري البحث عن الكاميرات...</option></select>
   <div id="reader"></div>
-  <div class="hint">اسمح للموقع باستخدام الكاميرا. سيتم تفضيل الكاميرا الخلفية على الهواتف.</div>
+  <div class="hint">يمكنك التبديل بين الكاميرات من القائمة أعلاه. يلزم السماح باستخدام الكاميرا وتشغيل الموقع عبر HTTPS أو localhost.</div>
  </div>
 </div>
 
@@ -390,23 +391,46 @@ document.getElementById('selectAllFields').onchange=e=>{document.querySelectorAl
 document.getElementById('newPermission').onchange=e=>{ if(e.target.value==='all'){document.getElementById('selectAllFields').checked=true;document.querySelectorAll('.field-check').forEach(x=>x.checked=true);} };
 
 
-async function startScan(){
- if(!currentUser || !currentUser.canScan) return;
- const modal=document.getElementById('modal'); modal.classList.add('show');
+let cameraBusy=false;
+async function startSelectedCamera(id){
+ if(cameraBusy)return;
+ cameraBusy=true;
+ const reader=document.getElementById('reader');
  try{
+  if(scanner){try{await scanner.stop()}catch(e){}try{scanner.clear()}catch(e){}scanner=null}
+  reader.innerHTML='';
   scanner=new Html5Qrcode('reader');
-  await scanner.start({facingMode:{exact:'environment'}},{fps:10,qrbox:{width:260,height:140}},
-   code=>{document.getElementById('q').value=String(code).trim();mode='barcode';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode==='barcode'));setStatus('تمت قراءة الباركود: '+String(code).trim(),'ok');stopScan();search()},
-   ()=>{});
- }catch(e){
-  try{
-   await scanner.start({facingMode:'environment'},{fps:10,qrbox:{width:260,height:140}},
-    code=>{document.getElementById('q').value=String(code).trim();mode='barcode';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode==='barcode'));setStatus('تمت قراءة الباركود: '+String(code).trim(),'ok');stopScan();search()},
-    ()=>{});
-  }catch(err){document.getElementById('reader').innerHTML='<div class="empty">تعذر تشغيل الكاميرا. تأكد من منح إذن الكاميرا واستخدام الموقع عبر HTTPS.</div>';}
- }
+  const onCode=code=>{document.getElementById('q').value=String(code).trim();mode='barcode';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode==='barcode'));setStatus('تمت قراءة الباركود: '+String(code).trim(),'ok');stopScan();search()};
+  await scanner.start(id||{facingMode:'environment'},{fps:10,qrbox:{width:260,height:140}},onCode,()=>{});
+ }catch(e){reader.innerHTML='<div class="empty">تعذر تشغيل الكاميرا المحددة. تحقق من الأذونات أو اختر كاميرا أخرى.</div>';console.error(e)}
+ finally{cameraBusy=false}
 }
-async function stopScan(){if(scanner){try{await scanner.stop();}catch(e){}try{scanner.clear();}catch(e){}scanner=null}document.getElementById('modal').classList.remove('show')}
+async function startScan(){
+ if(!currentUser || !currentUser.canScan)return;
+ document.getElementById('modal').classList.add('show');
+ const select=document.getElementById('cameraSelect');
+ select.innerHTML='<option value="">جاري البحث عن الكاميرات...</option>';
+ try{
+  // Request permission so device labels can be displayed when supported.
+  const devices=await Html5Qrcode.getCameras();
+  if(!document.getElementById('modal').classList.contains('show'))return;
+  if(!devices.length)throw new Error('No cameras');
+  select.innerHTML=devices.map((d,i)=>`<option value="${esc(d.id)}">${esc(d.label||'الكاميرا '+(i+1))}</option>`).join('');
+  const preferred=localStorage.getItem('materialExplorerCamera');
+  const match=devices.find(d=>d.id===preferred)||devices.find(d=>/back|rear|environment|خلف/i.test(d.label))||devices[0];
+  select.value=match.id;
+  await startSelectedCamera(match.id);
+ }catch(e){select.innerHTML='<option value="">الكاميرا الافتراضية</option>';await startSelectedCamera(null)}
+}
+async function stopScan(){
+ document.getElementById('modal').classList.remove('show');
+ if(scanner){const old=scanner;scanner=null;try{await old.stop()}catch(e){}try{old.clear()}catch(e){}}
+}
+document.getElementById('cameraSelect').addEventListener('change',e=>{
+ const id=e.target.value;
+ if(id)localStorage.setItem('materialExplorerCamera',id);
+ startSelectedCamera(id||null);
+});
 document.getElementById('scanBtn').onclick=startScan;
 document.getElementById('closeModal').onclick=stopScan;
 document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')stopScan()});
