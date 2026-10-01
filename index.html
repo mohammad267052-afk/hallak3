@@ -242,7 +242,7 @@ function render(list){
  out.innerHTML=list.slice(0,100).map(r=>{
   const title=nameCol>=0&&r[headers[nameCol]]?r[headers[nameCol]]:'مادة';
   const vals=getVisibleValues(r);
-  return `<article class="card item"><h3 class="item-title">${esc(title)}</h3><div class="fields">${vals.map(([h,v])=>`<div class="field"><span class="label">${esc(h)}</span><span class="value">${esc(convertPrice(h,v))}</span></div>`).join('')}</div></article>`;
+  return `<article class="card item"><h3 class="item-title">${esc(title)}</h3><div class="fields">${vals.map(([h,v])=>`<div class="field"><span class="label">${esc(h)}</span><span class="value">${esc(v)}${isPriceField(h) && String(convertPrice(h,v))!==String(v) ? `<span style="display:inline-block;margin-inline-start:10px;color:#0f766e;font-weight:800;border-inline-start:1px solid #cbd5e1;padding-inline-start:10px">${esc(convertPrice(h,v))}</span>` : ''}</span></div>`).join('')}</div></article>`;
  }).join('');
 }
 function barcodeNorm(s){
